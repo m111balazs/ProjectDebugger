@@ -1,4 +1,4 @@
-#include <Engine.h>
+#include <engine.h>
 #include <stdio.h>
 
 bool Engine_Init(Engine* engine, const char* title, int width, int height){
@@ -20,7 +20,7 @@ void Engine_BeginFrame(Engine* engine) {
     engine->deltaTime = (now - engine->lastFrame) / 1000.0f;
     engine->lastFrame = now;
 
-    SDL_SetRenderDrawBlendColor(engine->renderer, 40, 120, 200, 255);
+    SDL_SetRenderDrawColor(engine->renderer, 40, 120, 200, 255);
     SDL_RenderClear(engine->renderer);
 }
 
