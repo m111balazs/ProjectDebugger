@@ -1,63 +1,32 @@
+#include "core/engine.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
-#include <stdio.h>
-#include <stdbool.h>
 
-int main(int argc, char* argv[])
+int main(void)
 {
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        printf("SDL_Init failed: %s\n", SDL_GetError());
+    Engine engine;
+    if(!Engine_Init(&engine, "game", 800, 600)) {
         return 1;
     }
 
-    SDL_Window* window = SDL_CreateWindow("SDL3 Engine Base", 800, 600, 0);
-    if (!window) {
-        printf("Failed to create window: %s\n", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-    
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
-    if (!renderer) {
-        printf("Failed to create renderer: %s\n", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
+    SDL_Texture* tex = IMG_LoadTexture(engine.renderer, "assets/Banana.png");
 
-    SDL_Texture* sprite = IMG_LoadTexture(renderer, "assets/banana.png");
-    if (!sprite) {
-        printf("Failed to load sprite: %s\n", SDL_GetError());
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
-
-    bool running = true;
-    SDL_Event event;
-
-    while (running){
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT){
-                running = false;
+    while (engine.running) {
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_EVENT_QUIT){
+                engine.running = false;
             }
         }
 
-        SDL_SetRenderDrawColor(renderer, 40, 120, 200, 255);
-        SDL_RenderClear(renderer);
+        Engine_BeginFrame(&engine);
 
-        SDL_FRect dest = { 384, 284, 32, 32 };
-        SDL_RenderTexture(renderer, sprite, NULL, &dest);
+        SDL_FRect rect = { 384, 284, 32, 32 };
+        SDL_RenderTexture(engine.renderer, tex, NULL, &rect);
 
-        SDL_RenderPresent(renderer);
-        SDL_Delay(16); // ~60 FPS
+        Engine_EndFrame(&engine);
     }
 
-    SDL_DestroyTexture(sprite);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
+    Engine_Quit(&engine);
     return 0;
 }
