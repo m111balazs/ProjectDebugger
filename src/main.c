@@ -1,6 +1,7 @@
 #include "core/engine.h"
 #include "core/input.h"
 #include "graphics/texture.h"
+#include "graphics/animation.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 
@@ -14,6 +15,9 @@ int main(void)
         return 1;
     }
 
+    Animation walkAnim;
+    Animation_Load(&walkAnim, engine.renderer, "assets/Player_Walk.png", 32, 32, 4, 8);
+
     TextureManager_Init(engine.renderer);
     SDL_Texture* player = Texture_Load("assets/Player.png");
     SDL_Texture* grass = Texture_Load("assets/Grass.png");
@@ -22,6 +26,7 @@ int main(void)
     float speed = 200.0f;
     float spriteW = 32;
     float spriteH = 32;
+    bool moving = false;
 
     SDL_Event e;
 
@@ -37,13 +42,14 @@ int main(void)
         }
 
         // ---- MOVEMENT LOGIC ----
+        moving = false;
         float moveX = 0.0f;
         float moveY = 0.0f;
 
-        if (Input_IsKeyDown(SDLK_W)) moveY = -1;
-        if (Input_IsKeyDown(SDLK_S)) moveY =  1;
-        if (Input_IsKeyDown(SDLK_A)) moveX = -1;
-        if (Input_IsKeyDown(SDLK_D)) moveX =  1;
+        if (Input_IsKeyDown(SDLK_W)) { moveY = -1; moving = true; }
+        if (Input_IsKeyDown(SDLK_S)) { moveY = +1; moving = true; }
+        if (Input_IsKeyDown(SDLK_A)) { moveX = -1; moving = true; }
+        if (Input_IsKeyDown(SDLK_D)) { moveX = +1; moving = true; }
 
         float len = SDL_sqrtf(moveX * moveX + moveY * moveY);
         if (len > 0) {
@@ -54,6 +60,8 @@ int main(void)
         playerX += moveX * speed * engine.deltaTime;
         playerY += moveY * speed * engine.deltaTime;
 
+        if (moving) Animation_Update(&walkAnim, engine.deltaTime);
+
         // ---- BOUNDARY LIMITS ----
         if (playerX < 0) playerX = 0;
         if (playerY < 0) playerY = 0;
@@ -61,15 +69,13 @@ int main(void)
         if (playerY > 600 - 32) playerY = 600 - 32;
 
         Engine_BeginFrame(&engine);
-
-        SDL_FRect dest = { playerX, playerY, 32, 32 };
-        SDL_RenderTexture(engine.renderer, player, NULL, &dest);
-
+        Animation_Render(&walkAnim, engine.renderer, playerX, playerY);
         Engine_EndFrame(&engine);
+
         Input_EndFrame();
     }
 
-    TextureManager_Quit();
+    Animation_Destroy(&walkAnim);
     Engine_Quit(&engine);
     return 0;
 }

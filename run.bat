@@ -11,7 +11,7 @@ set INCLUDE_PATHS=-Isrc -Isrc/core -I"%SDL_PATH%\include" -I"%SDL_IMG_PATH%\incl
 set LIB_PATHS=-L"%SDL_PATH%\lib" -L"%SDL_IMG_PATH%\lib"
 set LIBS=-lSDL3 -lSDL3_image
 
-set SRC_FILES=src\main.c src\core\engine.c src\graphics\texture.c src\core\input.c
+set SRC_FILES=src\main.c src\core\engine.c src\core\input.c src\graphics\texture.c src\graphics\animation.c
 set OUT_FILE=build\game.exe
 
 echo.
@@ -20,13 +20,13 @@ echo Compiling...
 
 if %errorlevel% neq 0 (
     echo.
-    echo ❌ Build failed!
+    echo Build failed!
     pause
     exit /b %errorlevel%
 )
 
 echo.
-echo ✅ Build succeeded!
+echo Build succeeded!
 echo Running...
 echo ==============================
 echo.
