@@ -12,7 +12,7 @@ set LIB_PATHS=-L"%SDL_PATH%\lib" -L"%SDL_IMG_PATH%\lib"
 set LIBS=-lSDL3 -lSDL3_image
 
 set SRC_FILES=src\main.c src\core\engine.c
-set OUT_FILE=game.exe
+set OUT_FILE=build\game.exe
 
 echo.
 echo Compiling...

@@ -1,3 +1,3 @@
 @echo off
-build\game.exe
+game.exe
 pause
