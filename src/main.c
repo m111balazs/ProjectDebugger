@@ -2,8 +2,33 @@
 #include "core/input.h"
 #include "graphics/texture.h"
 #include "graphics/animation.h"
+#include "game/tilemap.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+
+int mapData[10][10] = {
+    {1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,1},
+    {1,0,2,0,0,0,3,0,0,1},
+    {1,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,1},
+    {1,0,3,0,0,2,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1}
+};
+
+// Convert 2D array to 1D pointer
+int* mapPtr = &mapData[0][0];
+
+// List of tile image paths (index matches map number)
+const char* tileset[] = {
+    "assets/Grass.png", // 0
+    "assets/Wall.png",  // 1
+    "assets/Water.png", // 2
+    "assets/Stone.png"  // 3
+};
 
 int main(void)
 {
@@ -14,6 +39,9 @@ int main(void)
     if(!Engine_Init(&engine, "game", windowWidth, windowHeight)) {
         return 1;
     }
+
+    Tilemap tilemap;
+    Tilemap_Load(&tilemap, engine.renderer, tileset, 4, mapPtr, 10, 10, 32);
 
     Animation walkAnim;
     Animation_Load(&walkAnim, engine.renderer, "assets/Player_Walk.png", 32, 32, 4, 8);
@@ -69,6 +97,7 @@ int main(void)
         if (playerY > 600 - 32) playerY = 600 - 32;
 
         Engine_BeginFrame(&engine);
+        Tilemap_Render(&tilemap, engine.renderer);
         Animation_Render(&walkAnim, engine.renderer, playerX, playerY);
         Engine_EndFrame(&engine);
 
@@ -76,6 +105,7 @@ int main(void)
     }
 
     Animation_Destroy(&walkAnim);
+    Tilemap_Destroy(&tilemap);
     Engine_Quit(&engine);
     return 0;
 }

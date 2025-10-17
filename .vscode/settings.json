@@ -1,3 +1,7 @@
 {
-    "codium.codeCompletion.enable": false
+    "codium.codeCompletion.enable": false,
+    "files.associations": {
+        "*.ejs": "html",
+        "tilemap.h": "c"
+    }
 }
