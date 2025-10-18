@@ -3,28 +3,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-bool Tilemap_Load(Tilemap* map, SDL_Renderer* renderer, const char* tileset[], int tileCount, const int* data, int width, int height, int tileSize) {
+bool Tilemap_Load(Tilemap* map, SDL_Renderer* renderer, const char** tileset, int tileCount, const int* mapData, int width, int height, int tileSize) {
     map->width = width;
     map->height = height;
     map->tileSize = tileSize;
-    map->tileCount = tileCount;
-    map->data = (int*)malloc(sizeof(int) * width * height);
-    if (!map->data) return false;
+    map->tiles = SDL_malloc(tileCount * sizeof(SDL_Texture*));
+    if (!map->tiles) { printf("Tilemap malloc failed\n"); return false; }
 
-    // Copy map data
-    for (int i = 0; i < width * height; i++){
-        map->data[i] = data[i];
-    }
+    printf("\n======= Loading Tiles =======\n");
 
-    // Load tile textures
-    for (int i = 0; i < tileCount; i++){
+    for (int i = 0; i < tileCount; i++) {
         map->tiles[i] = IMG_LoadTexture(renderer, tileset[i]);
         if (!map->tiles[i]) {
-            printf("Tilemap: Failed to load %s\n", tileset[i]);
+            printf("Failed to load tile %d from %s: %s\n", i, tileset[i], SDL_GetError());
             return false;
+        } else {
+            printf("Loaded tile %d: %s\n", i, tileset[i]);
         }
     }
 
+    map->data = mapData;
+    printf("Tilemap loaded successfully.\n");
     return true;
 }
 
@@ -37,8 +36,8 @@ void Tilemap_Render(Tilemap* map, SDL_Renderer* renderer){
             if(tileIndex < 0 || tileIndex >= map->tileCount) continue;
 
             SDL_FRect dest = {
-                (float)(x * map->tileSize),
-                (float)(y * map->tileSize),
+                (float)32 + (x * map->tileSize),
+                (float)32 + (y * map->tileSize),
                 (float)map->tileSize,
                 (float)map->tileSize
             };

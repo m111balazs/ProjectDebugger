@@ -11,6 +11,6 @@ typedef struct {
     int tileCount;
 } Tilemap;
 
-bool Tilemap_Load(Tilemap* map, SDL_Renderer* renderer, const char* tileset[], int tileCount, const int* data, int width, int height, int tileSize);
+bool Tilemap_Load(Tilemap* map, SDL_Renderer* renderer, const char** tileset, int tileCount, const int* mapData, int width, int height, int tileSize);
 void Tilemap_Render(Tilemap* tilemap, SDL_Renderer* renderer);
 void Tilemap_Destroy(Tilemap* Tilemap);
