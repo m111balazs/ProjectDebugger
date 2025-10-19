@@ -2,6 +2,7 @@
     "codium.codeCompletion.enable": false,
     "files.associations": {
         "*.ejs": "html",
-        "tilemap.h": "c"
+        "tilemap.h": "c",
+        "stdbool.h": "c"
     }
 }

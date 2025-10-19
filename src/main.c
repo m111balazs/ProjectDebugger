@@ -3,6 +3,7 @@
 #include "graphics/texture.h"
 #include "graphics/animation.h"
 #include "game/tilemap.h"
+#include "game/collision.h"
 #include <SDL3/SDL.h>
 #include <stdio.h>
 
@@ -106,6 +107,17 @@ int main(void){
 
         playerX += moveX * speed * engine.deltaTime;
         playerY += moveY * speed * engine.deltaTime;
+        
+        float proposedX = playerX + moveX * speed * engine.deltaTime;
+        float proposedY = playerY + moveY * speed * engine.deltaTime;
+
+        // Collision check for X
+        if (!Collision_Check(proposedX, playerY, spriteW, spriteH, &tilemap))
+        playerX = proposedX;
+
+        // Collision check for Y
+        if (!Collision_Check(playerX, proposedY, spriteW, spriteH, &tilemap))
+        playerY = proposedY;
 
         if (moving) {
             Animation_Update(&walkAnim, engine.deltaTime);

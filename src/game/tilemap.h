@@ -6,7 +6,7 @@ typedef struct {
     int width;
     int height;
     int tileSize;
-    int* data;
+    const int* data;
     SDL_Texture** tiles;
     int tileCount;
 } Tilemap;

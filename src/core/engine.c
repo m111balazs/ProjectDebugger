@@ -11,13 +11,13 @@ bool Engine_Init(Engine* engine, const char* title, int width, int height){
     engine->renderer = SDL_CreateRenderer(engine->window, NULL);
 
     engine->running = true;
-    engine->lastFrame = SDL_GetTicks();
+    engine->lastFrame = SDL_GetTicksNS();
     return true;
 }
 
 void Engine_BeginFrame(Engine* engine) {
-    Uint64 now = SDL_GetTicks();
-    engine->deltaTime = (now - engine->lastFrame) / 1000.0f;
+    Uint64 now = SDL_GetTicksNS();
+    engine->deltaTime = (now - engine->lastFrame) / 1e9f;
     engine->lastFrame = now;
 
     SDL_SetRenderDrawColor(engine->renderer, 40, 120, 200, 255);

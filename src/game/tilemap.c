@@ -48,8 +48,9 @@ void Tilemap_Render(Tilemap* map, SDL_Renderer* renderer){
 }
 
 void Tilemap_Destroy(Tilemap* map){
+    if(!map) return;
+
     for (int i = 0; i < map->tileCount; i++) SDL_DestroyTexture(map->tiles[i]);
 
-    free(map->tiles);
-    free(map->data);
+    SDL_free(map->tiles);
 }
