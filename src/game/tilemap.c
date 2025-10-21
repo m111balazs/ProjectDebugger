@@ -1,7 +1,10 @@
 #include "tilemap.h"
+#include "camera.h"
 #include <SDL3_image/SDL_image.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+extern Camera* gCamera;
 
 bool Tilemap_Load(Tilemap* map, SDL_Renderer* renderer, const char** tileset, int tileCount, const int* mapData, int width, int height, int tileSize) {
     map->width = width;
@@ -37,8 +40,8 @@ void Tilemap_Render(Tilemap* map, SDL_Renderer* renderer){
             if(tileIndex < 0 || tileIndex >= map->tileCount) continue;
 
             SDL_FRect dest = {
-                (float)32 + (x * map->tileSize),
-                (float)32 + (y * map->tileSize),
+                (float)32 + (x * map->tileSize - gCamera->x),
+                (float)32 + (y * map->tileSize - gCamera->y),
                 (float)map->tileSize,
                 (float)map->tileSize
             };
