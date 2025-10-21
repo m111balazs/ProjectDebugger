@@ -105,19 +105,16 @@ int main(void){
             moveY /= len;
         }
 
-        playerX += moveX * speed * engine.deltaTime;
-        playerY += moveY * speed * engine.deltaTime;
-        
+        // Axis-aligned collision resolution without pre-applying movement
         float proposedX = playerX + moveX * speed * engine.deltaTime;
+        if (!Collision_Check(proposedX, playerY, spriteW, spriteH, &tilemap)) {
+            playerX = proposedX;
+        }
+
         float proposedY = playerY + moveY * speed * engine.deltaTime;
-
-        // Collision check for X
-        if (!Collision_Check(proposedX, playerY, spriteW, spriteH, &tilemap))
-        playerX = proposedX;
-
-        // Collision check for Y
-        if (!Collision_Check(playerX, proposedY, spriteW, spriteH, &tilemap))
-        playerY = proposedY;
+        if (!Collision_Check(playerX, proposedY, spriteW, spriteH, &tilemap)) {
+            playerY = proposedY;
+        }
 
         if (moving) {
             Animation_Update(&walkAnim, engine.deltaTime);

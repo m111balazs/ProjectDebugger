@@ -7,6 +7,7 @@ bool Tilemap_Load(Tilemap* map, SDL_Renderer* renderer, const char** tileset, in
     map->width = width;
     map->height = height;
     map->tileSize = tileSize;
+    map->tileCount = tileCount;
     map->tiles = SDL_malloc(tileCount * sizeof(SDL_Texture*));
     if (!map->tiles) { printf("Tilemap malloc failed\n"); return false; }
 

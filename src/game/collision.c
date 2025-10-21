@@ -16,10 +16,17 @@ bool Collision_IsTileSolid(int tileIndex)
 
 bool Collision_Check(float newX, float newY, float spriteW, float spriteH, const Tilemap* tilemap)
 {
-    int leftTile   = (int)(newX / tilemap->tileSize);
-    int rightTile  = (int)((newX + spriteW - 1) / tilemap->tileSize);
-    int topTile    = (int)(newY / tilemap->tileSize);
-    int bottomTile = (int)((newY + spriteH - 1) / tilemap->tileSize);
+    // Account for render/world origin offset (margin)
+    const float originX = 32.0f;
+    const float originY = 32.0f;
+
+    float worldX = newX - originX;
+    float worldY = newY - originY;
+
+    int leftTile   = (int)(worldX / tilemap->tileSize);
+    int rightTile  = (int)((worldX + spriteW - 1) / tilemap->tileSize);
+    int topTile    = (int)(worldY / tilemap->tileSize);
+    int bottomTile = (int)((worldY + spriteH - 1) / tilemap->tileSize);
 
     for (int y = topTile; y <= bottomTile; y++) {
         for (int x = leftTile; x <= rightTile; x++) {
