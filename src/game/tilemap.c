@@ -3,6 +3,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 extern Camera* gCamera;
 
@@ -32,9 +33,23 @@ bool Tilemap_Load(Tilemap* map, SDL_Renderer* renderer, const char** tileset, in
 }
 
 void Tilemap_Render(Tilemap* map, SDL_Renderer* renderer){
-    for (int y = 0; y < map->height; y++)
+    int tileSize = map->tileSize;
+
+    int startX = (int)(gCamera->x / tileSize) -1;
+    int startY = (int)(gCamera->y / tileSize) -1;
+    int endX = (int)((gCamera->x + gCamera->width) / tileSize) + 2;
+    int endY = (int)((gCamera->y + gCamera->height) / tileSize) + 2;
+
+    // Clamp map bounds
+    if (startX < 0) startX = 0;
+    if (startY < 0) startY = 0;
+    if (endX > map->width) endX = map->width;
+    if (endY > map->height) endY = map->height;
+
+    // Render only visible tiles
+    for (int y = startY; y < endY; y++)
     {
-        for (int x = 0; x < map->width; x++)
+        for (int x = startX; x < endX; x++)
         {
             int tileIndex = map->data[y * map->width + x];
             if(tileIndex < 0 || tileIndex >= map->tileCount) continue;

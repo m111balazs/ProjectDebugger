@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define TILE_SIZE 32
 #define MAP_WIDTH 100

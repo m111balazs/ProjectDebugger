@@ -2,8 +2,8 @@
 #include <math.h>
 
 void Camera_Init(Camera* cam, float width, float height) {
-    cam->x = 0;
-    cam->y = 0;
+    cam->x = 0.0f;
+    cam->y = 0.0f;
     cam->width = width;
     cam->height = height;
 }
