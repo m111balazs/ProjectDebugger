@@ -6,6 +6,7 @@
 #include "game/collision.h"
 #include "game/camera.h"
 #include "game/utils.h"
+#include "game/maploader_json.h"
 #include <SDL3/SDL.h>
 #include <stdio.h>
 #include <time.h>
@@ -64,11 +65,15 @@ int main(void){
     // --- SYSTEM INITIALIZATION ---
     TextureManager_Init(engine.renderer);
 
-    GenerateTestMap();
-    int* mapPtr = &mapData[0][0];
+    JsonMap jsonMap;
+
+    if (!LoadMapFromJSON("assets/mainMap.json", &jsonMap)) {
+        printf("Failed to load JSON map!\n");
+        return 1;
+    }
 
     Tilemap tilemap;
-    if (!Tilemap_Load(&tilemap, engine.renderer, tileset, 4, mapPtr, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE)){
+    if (!Tilemap_Load(&tilemap, engine.renderer, tileset, 4, jsonMap.data, jsonMap.width, jsonMap.height, TILE_SIZE)){
         printf("Tilemap failed to load\n");
     } else printf("Tilemap loaded!\n");
 
@@ -82,8 +87,8 @@ int main(void){
     SDL_Texture* player = Texture_Load("assets/Player.png");
 
     float playerX, playerY;
-    FindRandomSpawn(&tilemap, &playerX, &playerY);
-    printf("player spawned at %.1f, %.1f\n", playerX, playerY);
+    playerX = jsonMap.playerStartX * jsonMap.tileSize;
+    playerY = jsonMap.playerStartY * jsonMap.tileSize;
     float speed = 200.0f;
     float spriteW = 32.0f;
     float spriteH = 32.0f;
@@ -152,6 +157,7 @@ int main(void){
 
     printf("Main loop finished\n");
     Animation_Destroy(&walkAnim);
+    FreeJsonMap(&jsonMap);
     Tilemap_Destroy(&tilemap);
     Engine_Quit(&engine);
 

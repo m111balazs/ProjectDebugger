@@ -3,6 +3,7 @@
     "files.associations": {
         "*.ejs": "html",
         "tilemap.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "utils.h": "c"
     }
 }
