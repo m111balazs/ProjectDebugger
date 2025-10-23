@@ -47,7 +47,8 @@ const char* tileset[] = {
     "assets/Grass.png", // 0
     "assets/Wall.png", // 1
     "assets/Water.png", // 2
-    "assets/Stone.png" // 3
+    "assets/Stone.png", // 3
+    "assets/Path.png" // 4
 };
 
 Camera camera;
