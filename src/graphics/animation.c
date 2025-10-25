@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 bool Animation_Load(Animation* anim, SDL_Renderer* renderer, const char* file, int frameWidth, int frameHeight, int frameCount, int fps){
+    printf("Loading animation for (%d)...\n", file);
     anim->texture = IMG_LoadTexture(renderer, file);
     if(!anim->texture){
         printf("Animation: Failed to load %s: %s\n", file, SDL_GetError());
@@ -15,6 +16,7 @@ bool Animation_Load(Animation* anim, SDL_Renderer* renderer, const char* file, i
     anim->currentFrame = 0;
     anim->frameTime = 1.0f / fps;
     anim->timeAccumulator = 0.0f;
+    printf("Loaded file (%d)\n", file);
     return true;
 }
 
@@ -40,5 +42,7 @@ void Animation_Render(Animation* anim, SDL_Renderer* renderer, float x, float y)
 }
 
 void Animation_Destroy(Animation* anim){
-    if (anim->texture) SDL_DestroyTexture(anim->texture);
+    printf("Destroying animation (%d)\n", anim);
+    if (anim->texture) { SDL_DestroyTexture(anim->texture); printf("Animation destroyed (%d)\n", anim); }
+    printf("Animation cant be destroyed (%d)\n", anim);
 }

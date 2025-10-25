@@ -1,6 +1,8 @@
 #include "entity.h"
+#include <stdio.h>
 
 void Entity_Init(Entity* e, SDL_Texture* tex, float x, float y, int w, int h, bool solid){
+    printf("Initializing entity: %d...\n", e);
     e->x = x;
     e->y = y;
     e->vx = 0;
@@ -10,6 +12,7 @@ void Entity_Init(Entity* e, SDL_Texture* tex, float x, float y, int w, int h, bo
     e->texture = tex;
     e->solid = solid;
     e->active = true;
+    printf("Initializing %d done.\n", e);
 }
 
 void Entity_Update(Entity* e, float deltaTime){

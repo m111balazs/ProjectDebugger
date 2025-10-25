@@ -28,7 +28,7 @@ bool Tilemap_Load(Tilemap* map, SDL_Renderer* renderer, const char** tileset, in
     }
 
     map->data = mapData;
-    printf("Tilemap loaded successfully.\n");
+    printf("====== Tilemap loaded successfully. ======\n\n");
     return true;
 }
 

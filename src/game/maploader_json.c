@@ -6,9 +6,10 @@
 
 bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
 {
+    printf("Loading JSON map from file (%d)...\n", filename);
     FILE* file = fopen(filename, "rb");
     if (!file) {
-        printf("❌ Failed to open JSON map: %s\n", filename);
+        printf("Failed to open JSON map: %s\n", filename);
         return false;
     }
 
@@ -23,7 +24,7 @@ bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
 
     cJSON* root = cJSON_Parse(jsonText);
     if (!root) {
-        printf("❌ JSON parse error\n");
+        printf("JSON parse error\n");
         free(jsonText);
         return false;
     }
@@ -46,7 +47,7 @@ bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
     // --- Load first layer’s data array ---
     cJSON* layers = cJSON_GetObjectItem(root, "layers");
     if (!layers || !cJSON_IsArray(layers)) {
-        printf("❌ No 'layers' array found in map file\n");
+        printf("No 'layers' array found in map file\n");
         cJSON_Delete(root);
         free(jsonText);
         return false;
@@ -56,7 +57,7 @@ bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
     cJSON* dataArray = cJSON_GetObjectItem(firstLayer, "data");
 
     if (!dataArray || !cJSON_IsArray(dataArray)) {
-        printf("❌ Invalid or missing 'data' field in layer\n");
+        printf("Invalid or missing 'data' field in layer\n");
         cJSON_Delete(root);
         free(jsonText);
         return false;
@@ -66,7 +67,7 @@ bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
     int height = outMap->height;
     int* mapData = malloc(sizeof(int) * width * height);
     if (!mapData) {
-        printf("❌ Out of memory for map\n");
+        printf("Out of memory for map\n");
         cJSON_Delete(root);
         free(jsonText);
         return false;
@@ -90,7 +91,7 @@ bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
 
     outMap->data = mapData;
 
-    printf("✅ Loaded JSON map: %dx%d (tileSize=%d)\n",
+    printf("Loaded JSON map: %dx%d (tileSize=%d)\n",
            outMap->width, outMap->height, outMap->tileSize);
 
     cJSON_Delete(root);

@@ -1,11 +1,14 @@
 #include "camera.h"
+#include <stdio.h>
 #include <math.h>
 
 void Camera_Init(Camera* cam, float width, float height) {
+    printf("Initializing camera...\n");
     cam->x = 0.0f;
     cam->y = 0.0f;
     cam->width = width;
     cam->height = height;
+    printf("Camera initialization done.\n");
 }
 
 void Camera_Update(Camera* cam, float targetX, float targetY, float mapW, float mapH) {

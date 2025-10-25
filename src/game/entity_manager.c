@@ -1,8 +1,11 @@
 #include "entity_manager.h"
+#include <stdio.h>
 #include <string.h>
 
 void EntityManager_Init(EntityManager* mgr){
+    printf("Initializing EntityManager...\n");
     memset(mgr, 0, sizeof(EntityManager));
+    printf("EntityManager initialization done.\n");
 }
 
 Entity* EntityManager_Create(EntityManager* mgr, SDL_Texture* tex, float x, float y, int w, int h, bool solid){

@@ -57,15 +57,15 @@ Camera camera;
 Camera* gCamera = &camera;
 
 int main(void){
+    printf("\n====== Engine ======\n");
     Engine engine;
-    printf("Engine init starting...\n");
-
     if(!Engine_Init(&engine, "Project Debugger", windowWidth, windowHeight)){
         printf("Engine init failed...\n");
         return 1;
     } printf("Engine done.\n");
 
     // --- SYSTEM INITIALIZATION ---
+    printf("\n====== Initializing ======\n");
     TextureManager_Init(engine.renderer);
 
     JsonMap jsonMap;
@@ -78,7 +78,7 @@ int main(void){
     Tilemap tilemap;
     if (!Tilemap_Load(&tilemap, engine.renderer, tileset, 5, jsonMap.data, jsonMap.width, jsonMap.height, TILE_SIZE)){
         printf("Tilemap failed to load\n");
-    } else printf("Tilemap loaded!\n");
+    }
 
     Animation walkAnim;
     if (!Animation_Load(&walkAnim, engine.renderer, "assets/Player_Walk.png", 32, 32, 4, 8)) {
@@ -95,8 +95,6 @@ int main(void){
 
     Entity* player = EntityManager_Create(&entityMgr, playerTex, 96, 96, 32, 32, true);
     Entity* banana = EntityManager_Create(&entityMgr, bananaTex, player->x + 32, player->y, 32, 32, false);
-
-    printf("Entities loaded: %d\n", entityMgr.count);
 
     player->x = jsonMap.playerStartX * jsonMap.tileSize;
     player->y = jsonMap.playerStartY * jsonMap.tileSize;
@@ -115,7 +113,7 @@ int main(void){
     bool moving = false;
 
     SDL_Event e;
-    printf("Entering main loop...\n");
+    printf("\n====== Entering main loop ======\n");
 
     while (engine.running)
     {
@@ -179,13 +177,13 @@ int main(void){
         Input_EndFrame();
     }
 
-    printf("Main loop finished\n");
+    printf("\n======= Main loop finished =======\n");
     Animation_Destroy(&walkAnim);
     FreeJsonMap(&jsonMap);
     Tilemap_Destroy(&tilemap);
     Engine_Quit(&engine);
 
-    printf("Done\n");
+    printf("\n====== Done ======\n");
     return 0;
 }
 

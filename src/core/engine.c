@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 bool Engine_Init(Engine* engine, const char* title, int width, int height){
+    printf("Initializing engine...\n");
     if(!SDL_Init(SDL_INIT_VIDEO)) {
         printf("SDL init error: %s\n", SDL_GetError());
         return false;
@@ -12,6 +13,7 @@ bool Engine_Init(Engine* engine, const char* title, int width, int height){
 
     engine->running = true;
     engine->lastFrame = SDL_GetTicksNS();
+    printf("Initialization done.\n");
     return true;
 }
 
@@ -29,7 +31,9 @@ void Engine_EndFrame(Engine* engine) {
 }
 
 void Engine_Quit(Engine* engine) {
+    printf("Engine quitting...\n");
     SDL_DestroyRenderer(engine->renderer);
     SDL_DestroyWindow(engine->window);
     SDL_Quit();
+    printf("Engine quitted.\n");
 }

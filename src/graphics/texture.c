@@ -10,8 +10,10 @@ static int textureCount = 0;
 static SDL_Renderer* globalRenderer = NULL;
 
 bool TextureManager_Init(SDL_Renderer* renderer){
+    printf("Initializing TextureManager...\n");
     globalRenderer = renderer;
     textureCount = 0;
+    printf("Initializing TextureManager done\n");
     return true;
 }
 
@@ -24,7 +26,7 @@ SDL_Texture* Texture_Load(const char* file){
     }
 
     if (textureCount >= MAX_TEXTURES) {
-        printf("TextureManager: Max texture limit reached");
+        printf("TextureManager: Max texture limit reached\n");
         return NULL;
     }
 
