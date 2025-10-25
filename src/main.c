@@ -7,6 +7,8 @@
 #include "game/camera.h"
 #include "game/utils.h"
 #include "game/maploader_json.h"
+#include "game/entity.h"
+#include "game/entity_manager.h"
 #include <SDL3/SDL.h>
 #include <stdio.h>
 #include <time.h>
@@ -84,12 +86,29 @@ int main(void){
     } printf("Animation loaded!\n");
 
     Camera_Init(&camera, (float)windowWidth, (float)windowHeight);
-    
-    SDL_Texture* player = Texture_Load("assets/Player.png");
 
-    float playerX, playerY;
-    playerX = jsonMap.playerStartX * jsonMap.tileSize;
-    playerY = jsonMap.playerStartY * jsonMap.tileSize;
+    EntityManager entityMgr;
+    EntityManager_Init(&entityMgr);
+    
+    SDL_Texture* playerTex = Texture_Load("assets/Player.png");
+    SDL_Texture* bananaTex = Texture_Load("assets/Banana.png");
+
+    Entity* player = EntityManager_Create(&entityMgr, playerTex, 96, 96, 32, 32, true);
+    Entity* banana = EntityManager_Create(&entityMgr, bananaTex, player->x + 32, player->y, 32, 32, false);
+
+    printf("Entities loaded: %d\n", entityMgr.count);
+
+    player->x = jsonMap.playerStartX * jsonMap.tileSize;
+    player->y = jsonMap.playerStartY * jsonMap.tileSize;
+
+    banana->x = player->x + 32;
+    banana->y = player->y;
+
+    Camera_Update(&camera, player->x + 16.0f, player->y + 16.0f, tilemap.width * tilemap.tileSize, tilemap.height * tilemap.tileSize);
+
+    camera.x = floorf(camera.x);
+    camera.y = floorf(camera.y);
+
     float speed = 200.0f;
     float spriteW = 32.0f;
     float spriteH = 32.0f;
@@ -125,23 +144,25 @@ int main(void){
         }
 
         // Axis-aligned collision resolution without pre-applying movement
-        float proposedX = playerX + moveX * speed * engine.deltaTime;
-        if (!Collision_Check(proposedX, playerY, spriteW, spriteH, &tilemap)) {
-            playerX = proposedX;
+        float proposedX = player->x + moveX * speed * engine.deltaTime;
+        if (!Collision_Check(proposedX, player->y, spriteW, spriteH, &tilemap)) {
+            player->x = proposedX;
         }
 
-        float proposedY = playerY + moveY * speed * engine.deltaTime;
-        if (!Collision_Check(playerX, proposedY, spriteW, spriteH, &tilemap)) {
-            playerY = proposedY;
+        float proposedY = player->y + moveY * speed * engine.deltaTime;
+        if (!Collision_Check(player->x, proposedY, spriteW, spriteH, &tilemap)) {
+            player->y = proposedY;
         }
 
         if (moving) {
             Animation_Update(&walkAnim, engine.deltaTime);
         }
 
+        EntityManager_Update(&entityMgr, engine.deltaTime);
+
         Camera_Update(&camera,
-            playerX + spriteW / 2.0f,
-            playerY + spriteH / 2.0f,
+            player->x + spriteW / 2.0f,
+            player->y + spriteH / 2.0f,
             tilemap.width * tilemap.tileSize,
             tilemap.height * tilemap.tileSize);
 
@@ -150,7 +171,9 @@ int main(void){
 
         Tilemap_Render(&tilemap, engine.renderer);
         Animation_Render(&walkAnim, engine.renderer, 
-            playerX - camera.x, playerY - camera.y);
+            player->x - camera.x, player->y - camera.y);
+        EntityManager_Render(&entityMgr, engine.renderer, camera.x, camera.y);
+        
         Engine_EndFrame(&engine);
 
         Input_EndFrame();

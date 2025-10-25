@@ -11,7 +11,7 @@ set INCLUDE_PATHS=-Isrc -Isrc/core -I"%SDL_PATH%\include" -I"%SDL_IMG_PATH%\incl
 set LIB_PATHS=-L"%SDL_PATH%\lib" -L"%SDL_IMG_PATH%\lib"
 set LIBS=-lSDL3 -lSDL3_image
 
-set SRC_FILES=src\main.c src\core\engine.c src\core\input.c src\graphics\texture.c src\graphics\animation.c src\game\tilemap.c src\game\collision.c src\game\camera.c src\game\utils.c src\game\maploader_json.c src\external\cJSON.c
+set SRC_FILES=src\main.c src\core\engine.c src\core\input.c src\graphics\texture.c src\graphics\animation.c src\game\tilemap.c src\game\collision.c src\game\camera.c src\game\utils.c src\game\maploader_json.c src\external\cJSON.c src\game\entity.c src\game\entity_manager.c
 set OUT_FILE=build\game.exe
 
 echo.
