@@ -74,7 +74,7 @@ int main(void){
     }
 
     Tilemap tilemap;
-    if (!Tilemap_Load(&tilemap, engine.renderer, tileset, 4, jsonMap.data, jsonMap.width, jsonMap.height, TILE_SIZE)){
+    if (!Tilemap_Load(&tilemap, engine.renderer, tileset, 5, jsonMap.data, jsonMap.width, jsonMap.height, TILE_SIZE)){
         printf("Tilemap failed to load\n");
     } else printf("Tilemap loaded!\n");
 
