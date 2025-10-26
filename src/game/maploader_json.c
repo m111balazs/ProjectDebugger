@@ -6,10 +6,11 @@
 
 bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
 {
-    printf("Loading JSON map from file (%d)...\n", filename);
+    printf("📄 Loading JSON map: %s\n", filename);
+
     FILE* file = fopen(filename, "rb");
     if (!file) {
-        printf("Failed to open JSON map: %s\n", filename);
+        printf("❌ Failed to open JSON map file: %s\n", filename);
         return false;
     }
 
@@ -18,18 +19,24 @@ bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
     fseek(file, 0, SEEK_SET);
 
     char* jsonText = malloc(length + 1);
+    if (!jsonText) {
+        printf("❌ Memory allocation failed for JSON text.\n");
+        fclose(file);
+        return false;
+    }
+
     fread(jsonText, 1, length, file);
     jsonText[length] = '\0';
     fclose(file);
 
     cJSON* root = cJSON_Parse(jsonText);
     if (!root) {
-        printf("JSON parse error\n");
+        printf("❌ JSON parse error — check file syntax.\n");
         free(jsonText);
         return false;
     }
 
-    // --- Read core map data ---
+    // --- Core map info ---
     outMap->width = cJSON_GetObjectItem(root, "width")->valueint;
     outMap->height = cJSON_GetObjectItem(root, "height")->valueint;
     outMap->tileSize = cJSON_GetObjectItem(root, "tileSize")->valueint;
@@ -44,54 +51,69 @@ bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
         outMap->playerStartY = 0;
     }
 
-    // --- Load first layer’s data array ---
+    // --- Layers ---
     cJSON* layers = cJSON_GetObjectItem(root, "layers");
     if (!layers || !cJSON_IsArray(layers)) {
-        printf("No 'layers' array found in map file\n");
-        cJSON_Delete(root);
-        free(jsonText);
-        return false;
-    }
+        printf("⚠️  No 'layers' array found in map — loading as single-layer fallback.\n");
 
-    cJSON* firstLayer = cJSON_GetArrayItem(layers, 0);
-    cJSON* dataArray = cJSON_GetObjectItem(firstLayer, "data");
+        // fallback to a single-layer layout
+        outMap->layerCount = 1;
+        outMap->layers = malloc(sizeof(int*));
+        outMap->layers[0] = NULL;
+    } else {
+        int layerCount = cJSON_GetArraySize(layers);
+        outMap->layerCount = layerCount;
+        outMap->layers = malloc(sizeof(int*) * layerCount);
 
-    if (!dataArray || !cJSON_IsArray(dataArray)) {
-        printf("Invalid or missing 'data' field in layer\n");
-        cJSON_Delete(root);
-        free(jsonText);
-        return false;
-    }
+        printf("✅ Found %d layer(s)\n", layerCount);
 
-    int width = outMap->width;
-    int height = outMap->height;
-    int* mapData = malloc(sizeof(int) * width * height);
-    if (!mapData) {
-        printf("Out of memory for map\n");
-        cJSON_Delete(root);
-        free(jsonText);
-        return false;
-    }
+        for (int l = 0; l < layerCount; l++) {
+            cJSON* layer = cJSON_GetArrayItem(layers, l);
+            cJSON* name = cJSON_GetObjectItem(layer, "name");
+            const char* layerName = name ? name->valuestring : "(unnamed)";
+            cJSON* dataArray = cJSON_GetObjectItem(layer, "data");
 
-    int y = 0;
-    cJSON* row = NULL;
-    cJSON_ArrayForEach(row, dataArray) {
-        if (!cJSON_IsArray(row)) continue;
-
-        int x = 0;
-        cJSON* tile = NULL;
-        cJSON_ArrayForEach(tile, row) {
-            if (x < width && y < height) {
-                mapData[y * width + x] = tile->valueint;
+            if (!dataArray || !cJSON_IsArray(dataArray)) {
+                printf("⚠️  Layer '%s' missing or invalid — skipping\n", layerName);
+                outMap->layers[l] = NULL;
+                continue;
             }
-            x++;
+
+            int width = outMap->width;
+            int height = outMap->height;
+            int* layerData = malloc(sizeof(int) * width * height);
+            if (!layerData) {
+                printf("❌ Out of memory for layer '%s'\n", layerName);
+                outMap->layers[l] = NULL;
+                continue;
+            }
+
+            int y = 0;
+            cJSON* row = NULL;
+            cJSON_ArrayForEach(row, dataArray) {
+                if (!cJSON_IsArray(row)) continue;
+                int x = 0;
+                cJSON* tile = NULL;
+                cJSON_ArrayForEach(tile, row) {
+                    if (x < width && y < height) {
+                        layerData[y * width + x] = tile->valueint;
+                    }
+                    x++;
+                }
+                y++;
+            }
+
+            if (y == 0) {
+                printf("⚠️  Layer '%s' appears empty.\n", layerName);
+            } else {
+                printf("✅ Loaded layer '%s' (%dx%d)\n", layerName, width, height);
+            }
+
+            outMap->layers[l] = layerData;
         }
-        y++;
     }
 
-    outMap->data = mapData;
-
-    printf("Loaded JSON map: %dx%d (tileSize=%d)\n",
+    printf("✅ Map loaded successfully: %dx%d (tileSize=%d)\n",
            outMap->width, outMap->height, outMap->tileSize);
 
     cJSON_Delete(root);
@@ -101,8 +123,13 @@ bool LoadMapFromJSON(const char* filename, JsonMap* outMap)
 
 void FreeJsonMap(JsonMap* map)
 {
-    if (map && map->data) {
-        free(map->data);
-        map->data = NULL;
+    if (!map) return;
+
+    if (map->layers) {
+        for (int i = 0; i < map->layerCount; i++) {
+            if (map->layers[i]) free(map->layers[i]);
+        }
+        free(map->layers);
+        map->layers = NULL;
     }
 }

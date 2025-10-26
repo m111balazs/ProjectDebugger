@@ -5,7 +5,8 @@ static bool solidTiles[] = {
     false, // 0 = Grass
     true, // 1 = Wall
     true, // 2 = Water
-    true // 3 = Stone
+    true, // 3 = Stone
+    false // 4 = path
 };
 bool Collision_IsTileSolid(int tileIndex)
 {
@@ -17,11 +18,10 @@ bool Collision_IsTileSolid(int tileIndex)
 bool Collision_Check(float newX, float newY, float spriteW, float spriteH, const Tilemap* tilemap)
 {
     // Account for render/world origin offset (margin)
-    const float originX = 32.0f;
-    const float originY = 32.0f;
+    
 
-    float worldX = newX - originX;
-    float worldY = newY - originY;
+    float worldX = newX;
+    float worldY = newY;
 
     int leftTile   = (int)(worldX / tilemap->tileSize);
     int rightTile  = (int)((worldX + spriteW - 1) / tilemap->tileSize);
@@ -34,7 +34,7 @@ bool Collision_Check(float newX, float newY, float spriteW, float spriteH, const
             if (x < 0 || y < 0 || x >= tilemap->width || y >= tilemap->height)
                 return true;
 
-            int tileIndex = tilemap->data[y * tilemap->width + x];
+            int tileIndex = tilemap->layers[0][y * tilemap->width + x];
             if (Collision_IsTileSolid(tileIndex))
                 return true;
         }

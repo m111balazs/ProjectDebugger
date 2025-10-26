@@ -5,7 +5,10 @@ typedef struct {
     int width;
     int height;
     int tileSize;
-    int* data;
+
+    int layerCount;
+    int** layers;
+
     float playerStartX;
     float playerStartY;
 } JsonMap;
