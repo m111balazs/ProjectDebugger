@@ -98,6 +98,7 @@ int main(void){
 
     player->x = jsonMap.playerStartX * jsonMap.tileSize;
     player->y = jsonMap.playerStartY * jsonMap.tileSize;
+    player->animation = &walkAnim;
 
     banana->x = player->x + 32;
     banana->y = player->y;
@@ -168,8 +169,6 @@ int main(void){
         Engine_BeginFrame(&engine);
 
         Tilemap_Render(&tilemap, engine.renderer);
-        Animation_Render(&walkAnim, engine.renderer, 
-            player->x - camera.x, player->y - camera.y);
         EntityManager_Render(&entityMgr, engine.renderer, camera.x, camera.y);
         
         Engine_EndFrame(&engine);

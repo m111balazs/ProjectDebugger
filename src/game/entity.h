@@ -1,12 +1,14 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include <stdbool.h>
+#include "graphics/animation.h"
 
 typedef struct {
     float x, y;
     float vx, vy;
     int width, height;
     SDL_Texture* texture;
+    Animation* animation;
     bool active;
     bool solid;
 } Entity;

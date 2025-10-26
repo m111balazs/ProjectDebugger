@@ -3,8 +3,11 @@
 #include "game/tilemap.h"
 
 typedef struct {
-    float x, y;         // top left corner of camera in world space
-    float width, height;// veiwport size (same as window)
+    float x, y;         
+    float width, height;
+    float targetX, targetY;
+    float smoothSpeed;
+    float offsetX, offsetY;
 } Camera;
 
 void Camera_Init (Camera* cam, float width, float height);
